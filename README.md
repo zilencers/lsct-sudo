@@ -1,2 +1,2 @@
 # lsct-sudo
-Linux Server Configuration Tool Sudo Module
+Linux Server Configuration Tool Sudo Package
