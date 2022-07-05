@@ -29,7 +29,7 @@ create_user() {
 
     echo ""
     echo "Adding user..."
-    adduser $username -m
+    useradd $username -m
     passwd $username
 
     # If the user is not a member of wheel, software using 
