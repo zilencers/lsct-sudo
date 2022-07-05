@@ -57,7 +57,7 @@ check_sudoers() {
     result=$(visudo -c $SUDOERS | grep -i ok)
     echo $result
 
-    if [ ! $result ] ; then
+    if [ ! "$result" ] ; then
         echo "Error: sudoers file is not valid"
         echo "Run: 'visudo -c /etc/sudoers.bak' for more information"
 	read
