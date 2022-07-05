@@ -73,7 +73,7 @@ config_pam_su() {
 
     # Require user to be in the wheel group in to use su
     sed -i 's/##auth           required        pam_wheel.so use_uid/auth           required        pam_wheel.so use_uid/' $PAM_SU
-    sed -i 's/#auth           required        pam_wheel.so use_uid/auth           required        pam_wheel.so use_uid/' $PAM_SU_l
+    sed -i 's/#auth           required        pam_wheel.so use_uid/auth           required        pam_wheel.so use_uid/' $PAM_SU_L
 
     echo "Complete"
 }
