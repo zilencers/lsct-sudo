@@ -20,12 +20,15 @@ install_pkgs() {
 }
 
 create_user() {
+    echo ""
     echo "A new user needs to be created and setup as a sudoer"
     echo "Note: It is not recommended the username be adm, admin or administrator."
     echo "      Usernames may contain letters, numbers, and special characters."
     printf "Please enter a username: "
     read username
 
+    echo ""
+    echo "Adding user..."
     adduser $username -m
     passwd $username
 
@@ -33,28 +36,38 @@ create_user() {
     # Polkit may ask to authenticate using the root password 
     # instead of the user password.
 
+    echo "Adding user to wheel..."
     usermod -a -G wheel $username  
 }
 
 edit_sudoers() {
-    cp "$SUDOERS $SUDOERS.bak"
-    sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' "$SUDOERS.bak"
+    echo "Checking for existing sudoers backup file..."
+    [ -f $SUDOERS.bak ] && rm $SUDOERS.bak
+
+    echo "Making backup of $SUDOERS..."
+    cp $SUDOERS $SUDOERS.bak
+
+    echo "Modifying $SUDOERS..."
+    sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' $SUDOERS
     check_sudoers
-    cp "$SUDOERS.bak $SUDOERS"
 }
 
 check_sudoers() {
-    result=$(visudo -c "$SUDOERS.bak" | grep -i ok)
+    printf "Checking for valid sudoers file..."
+    result=$(visudo -c $SUDOERS | grep -i ok)
+    echo $result
 
     if [ ! $result ] ; then
         echo "Error: sudoers file is not valid"
         echo "Run: 'visudo -c /etc/sudoers.bak' for more information"
+	read
         exit 1 
     fi
 }
 
 config_pam_su() {
-    echo "Configuring PAM...."
+    echo "Configuring $PAM_SU...."
+    printf "Configuring $PAM_SU_L..."
 
     # Require user to be in the wheel group in to use su
     sed -i 's/##auth           required        pam_wheel.so use_uid/auth           required        pam_wheel.so use_uid/' $PAM_SU
