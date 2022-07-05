@@ -48,7 +48,9 @@ edit_sudoers() {
     cp $SUDOERS $SUDOERS.bak
 
     echo "Modifying $SUDOERS..."
+    chmod 640 $SUDOERS
     sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' $SUDOERS
+    chmod 440 $SUDOERS
     check_sudoers
 }
 
