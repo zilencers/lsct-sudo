@@ -103,6 +103,7 @@ disable_root() {
 
     echo "Sudo setup is now complete... "
     echo "Press any key to continue"
+    read
 }
 
 title() {
