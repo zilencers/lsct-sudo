@@ -3,6 +3,8 @@
 SUDOERS=/etc/sudoers
 PAM_SU=/etc/pam.d/su
 PAM_SU_L=/etc/pam.d/su-l
+SECTTY=/etc/securetty
+USERNAME=""
 
 install_pkgs() {
     printf "WARNING: $3 package(s) will be installed. Continue (y/N): "
@@ -25,19 +27,19 @@ create_user() {
     echo "Note: It is not recommended the username be adm, admin or administrator."
     echo "      Usernames may contain letters, numbers, and special characters."
     printf "Please enter a username: "
-    read username
+    read USERNAME
 
     echo ""
     echo "Adding user..."
-    useradd $username -m
-    passwd $username
+    useradd $USERNAME -m
+    passwd $USERNAME
 
     # If the user is not a member of wheel, software using 
     # Polkit may ask to authenticate using the root password 
     # instead of the user password.
 
     echo "Adding user to wheel..."
-    usermod -a -G wheel $username  
+    usermod -a -G wheel $USERNAME  
 }
 
 edit_sudoers() {
@@ -80,7 +82,7 @@ config_pam_su() {
 
 disable_root() {
     echo ""
-    echo "This portion of the setup will lock the root account."
+    echo "This portion of the setup will disable root login."
     echo "It is HIGHLY recommended that you switch to a new tty"
     echo "and test the new user account. After confirming the new"
     echo "user account is able to login, make sure sudo is working" 
@@ -91,15 +93,20 @@ disable_root() {
     tty
 
     echo ""
-    printf "Continue with locking the root account? (y/N): "
+    printf "Continue with disabling root login? (y/N): "
     read answer
 
-    if [ "$answer" == "y" ] ; then
-	echo "Locking root account..."
-        passwd -l root
-	echo "The root account may be unlocked at any time with:"
-	echo "sudo passwd -u root"
-    fi
+    touch $SECTTY.bak
+    echo "#console" >> $SECTTY.bak 
+    echo "#tty1" >> $SECTTY.bak 
+    echo "#tty2" >> $SECTTY.bak 
+    echo "#tty3" >> $SECTTY.bak 
+    echo "#tty4" >> $SECTTY.bak 
+    echo "#tty5" >> $SECTTY.bak 
+    echo "#tty6" >> $SECTTY.bak 
+    echo "#ttyS0" >> $SECTTY.bak 
+    echo "#hvc0" >> $SECTTY.bak
+    mv $SECTTY.bak $SECTTY 
 
     echo "Sudo setup is now complete... "
     echo "Press any key to continue"
